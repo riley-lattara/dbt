@@ -1,0 +1,34 @@
+WITH REVENUE_USERS AS (
+    SELECT DISTINCT USER_ID
+    FROM {{ ref('v_stg_revenue__events') }}
+)
+
+, DEVICE_USER_ACTIVITY AS (
+    SELECT AE.DEVICE_ID
+         , AE.USER_ID
+         , MIN(AE.EVENT_TIME) AS FIRST_EVENT_TIME
+         , IFF(RU.USER_ID IS NOT NULL, 1, 0) AS HAS_REVENUE
+         , MAX(IFF(AE.EVENT_TYPE IN ('Registered', 'registation', 'NewPlayerCreation_Success', 'Welcome_DeviceSignIn'), 1, 0)) AS HAS_LOGIN
+    FROM {{ source('amplitude', 'EVENTS_726530') }} AE
+    LEFT JOIN REVENUE_USERS RU ON AE.USER_ID = RU.USER_ID
+    WHERE AE.DEVICE_ID IS NOT NULL
+      AND AE.USER_ID IS NOT NULL
+    GROUP BY AE.DEVICE_ID, AE.USER_ID, RU.USER_ID
+)
+
+, RANKED_USERS AS (
+    SELECT DEVICE_ID
+         , USER_ID
+         , ROW_NUMBER() OVER (
+             PARTITION BY DEVICE_ID 
+             ORDER BY HAS_REVENUE DESC
+                    , HAS_LOGIN DESC
+                    , FIRST_EVENT_TIME ASC
+           ) AS USER_RANK
+    FROM DEVICE_USER_ACTIVITY
+)
+
+SELECT DEVICE_ID AS DEVICE_ID_UUID
+     , USER_ID AS USER_ID_INTEGER
+FROM RANKED_USERS
+WHERE USER_RANK = 1
