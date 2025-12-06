@@ -14,8 +14,8 @@ select
   c.conversion_action_name,
   c.conversions,
   c.conversion_value
-from {{ ref('google_spend') }} s
-left join {{ ref('google_conversions') }} c
+from {{ ref('int_google_spend') }} s
+left join {{ ref('int_google_conversions') }} c
   on s.date = c.date  -- ADD THIS
   and s.campaign_id = c.campaign_id
   and s.ad_group_id = c.ad_group_id

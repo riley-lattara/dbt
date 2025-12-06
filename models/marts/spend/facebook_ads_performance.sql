@@ -11,7 +11,7 @@ SELECT CAST(DATE AS DATE) AS DATE
      , IMPRESSIONS_RAW/DIVIDEND AS IMPRESSIONS
      , CLICKS_RAW/DIVIDEND AS CLICKS
      , ALLCONV
-FROM {{ ref('v_stg_facebook_conversions') }}
+FROM {{ ref('int_facebook_conversions') }}
 ORDER BY DATE DESC
      , CAMPAIGN ASC
      , ADSET ASC
