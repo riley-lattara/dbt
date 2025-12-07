@@ -4,6 +4,6 @@ SELECT id as customer_id
         SELECT id
              , descriptive_name
              , ROW_NUMBER() OVER (PARTITION BY id ORDER BY updated_at DESC) as rn
-        FROM `mavan-analytics.google_ads_v2.account_history`
+        FROM FIVETRAN_DATABASE.GOOGLE_ADS_FM.ACCOUNT_HISTORY
     )
     WHERE rn = 1
