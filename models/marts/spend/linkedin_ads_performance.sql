@@ -24,8 +24,8 @@ full outer join {{ ref('int_linkedin_conversions') }} c
             and s.campaignid = c.campaign_id
 )
 select date as date
-     , cast(date_trunc(date, week) as date) + 1 as weekstart
-     , date_trunc(date, month) as month
+     , dateadd(day, 1, date_trunc('week', date)) as weekstart
+     , date_trunc('month', date) as month
      , account as account
      , campaign_group as campaigngroup
      , campaign as campaign
@@ -41,10 +41,10 @@ select date as date
      , sum(coalesce(leads, 0)) as leads
      , sum(coalesce(opens, 0)) as opens
      , sum(coalesce(leadformopens, 0)) as leadformopens
-     , safe_divide(sum(coalesce(spend, 0)), sum(coalesce(clicks, 0))) as cpc
-     , safe_divide(sum(coalesce(spend, 0)), sum(coalesce(conversions, 0))) as cpa
-     , safe_divide(sum(coalesce(clicks, 0)), sum(coalesce(impressions, 0))) * 100 as ctr
-     , safe_divide(sum(coalesce(conversions, 0)), sum(coalesce(clicks, 0))) * 100 as cvr
+     , div0(sum(coalesce(spend, 0)), sum(coalesce(clicks, 0))) as cpc
+     , div0(sum(coalesce(spend, 0)), sum(coalesce(conversions, 0))) as cpa
+     , div0(sum(coalesce(clicks, 0)), sum(coalesce(impressions, 0))) * 100 as ctr
+     , div0(sum(coalesce(conversions, 0)), sum(coalesce(clicks, 0))) * 100 as cvr
 from base_data
 group by 1
        , 2
