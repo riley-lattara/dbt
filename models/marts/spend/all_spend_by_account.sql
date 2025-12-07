@@ -7,7 +7,6 @@ select date
      , sum(spend) as spend
      , sum(impressions) as impressions
      , sum(clicks) as clicks
-     , sum(revenue) as revenue
 from {{ ref('facebook_ads_performance') }}
 group by 1,2,3,4
 
@@ -20,22 +19,20 @@ select date
      , sum(spend) as spend
      , sum(impressions) as impressions
      , sum(clicks) as clicks
-     , sum(revenue) as revenue
 from {{ ref('google_ads_performance') }}
 group by 1,2,3,4
 
-union all
+-- union all
 
-select date
-     , 'TikTok' as platform
-     , account
-     , campaign
-     , sum(spend) as spend
-     , sum(impressions) as impressions
-     , sum(clicks) as clicks
-     , sum(revenue) as revenue
-from {{ ref('tiktok_ads_performance') }}
-group by 1,2,3,4
+-- select date
+--      , 'TikTok' as platform
+--      , account
+--      , campaign
+--      , sum(spend) as spend
+--      , sum(impressions) as impressions
+--      , sum(clicks) as clicks
+-- from {{ ref('tiktok_ads_performance') }}
+-- group by 1,2,3,4
 
 union all
 
@@ -46,7 +43,6 @@ select date
      , sum(spend) as spend
      , sum(impressions) as impressions
      , sum(clicks) as clicks
-     , sum(revenue) as revenue
 from {{ ref('linkedin_ads_performance') }}
 where spend > 0 
 group by 1,2,3,4
