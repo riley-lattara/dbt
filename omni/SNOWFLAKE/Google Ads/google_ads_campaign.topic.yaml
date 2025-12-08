@@ -1,0 +1,35 @@
+# Google Ads Campaign Performance Topic
+base_view: dbt_prod__google_ads_campaign_performance
+base_view_label: Google Ads Campaigns
+label: Google Ads Campaign Performance
+group_label: Google Ads
+description: |
+  Campaign-level Google Ads performance data including spend, impressions, 
+  clicks, and conversions. 100% spend coverage including Performance Max.
+  Use this topic for budget allocation and campaign strategy analysis.
+
+joins: {}
+
+ai_context: |
+  This topic contains Google Ads campaign performance data.
+  Key metrics available:
+  - total_spend: Total advertising spend in USD
+  - total_impressions: Number of times ads were shown
+  - total_clicks: Number of clicks on ads
+  - total_conversions: Number of conversion events
+  - total_conversion_value: Revenue from conversions
+  - ctr: Click-through rate (clicks / impressions)
+  - cpc: Cost per click (spend / clicks)
+  - cpm: Cost per thousand impressions
+  - cpa: Cost per acquisition (spend / conversions)
+  - roas: Return on ad spend (conversion_value / spend)
+  - conversion_rate: Conversions / clicks
+  Data hierarchy:
+  - Account > Campaign > Conversion Action
+  Common questions:
+  - What is our total spend by campaign?
+  - Which campaigns have the best ROAS?
+  - What is our average CPA by month?
+  - Show me spend trends over time
+  When asked about performance, default to using total_spend, total_clicks, 
+  and ctr. For conversion analysis, use total_conversions and cpa.
