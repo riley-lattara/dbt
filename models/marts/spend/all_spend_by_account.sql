@@ -22,18 +22,6 @@ select date
 from {{ ref('google_ads_performance') }}
 group by 1,2,3,4
 
--- union all
-
--- select date
---      , 'TikTok' as platform
---      , account
---      , campaign
---      , sum(spend) as spend
---      , sum(impressions) as impressions
---      , sum(clicks) as clicks
--- from {{ ref('tiktok_ads_performance') }}
--- group by 1,2,3,4
-
 union all
 
 select date
