@@ -8,7 +8,6 @@ SELECT
     ac.customer_id,
     cam.campaign_name AS campaign,
     ac.campaign_id,
-    cam.advertising_channel_type AS campaign_type,
     adg.ad_group_name AS adgroup,
     ac.id AS ad_group_id,
     ac.conversion_action_name,
@@ -21,5 +20,5 @@ LEFT JOIN {{ ref('v_stg_google_campaigns') }} cam
     ON cam.campaign_id = ac.campaign_id
 LEFT JOIN {{ ref('v_stg_google_adgroup') }} adg
     ON adg.ad_group_id = ac.id
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
 ORDER BY 1 DESC
