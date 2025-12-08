@@ -9,7 +9,7 @@
              , keyword_match_type
              , type
              , ROW_NUMBER() OVER (PARTITION BY id ORDER BY updated_at DESC) as rn
-        FROM `mavan-analytics.google_ads_v2.ad_group_criterion_history`
+        FROM FIVETRAN_DATABASE.GOOGLE_ADS_FM.AD_GROUP_CRITERION_HISTORY
         WHERE type = 'KEYWORD'
     )
     WHERE rn = 1

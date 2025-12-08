@@ -26,7 +26,7 @@ left join {{ ref('v_stg_linkedin_campaigns') }} camp
        on camp.id = cr.campaign_id
 left join {{ ref('v_stg_linkedin_campaign_groups') }} cg
        on cg.id = camp.campaign_group_id
-left join {{ ref('v_stg_linkedin_accounts') }}a
+left join {{ ref('v_stg_linkedin_accounts') }} a
        on a.id = cg.account_id
 )
 
