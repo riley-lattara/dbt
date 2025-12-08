@@ -8,7 +8,6 @@ SELECT
     ags.customer_id,
     cam.campaign_name AS campaign,
     ags.campaign_id,
-    cam.advertising_channel_type AS campaign_type,
     adg.ad_group_name AS adgroup,
     ags.id AS ad_group_id,
     SUM(ags.cost_micros) / 1000000 AS spend,
@@ -23,5 +22,5 @@ LEFT JOIN {{ ref('v_stg_google_campaigns') }} cam
     ON cam.campaign_id = ags.campaign_id
 LEFT JOIN {{ ref('v_stg_google_adgroup') }} adg
     ON adg.ad_group_id = ags.id
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
+GROUP BY 1, 2, 3, 4, 5, 6, 7
 ORDER BY 1 DESC
