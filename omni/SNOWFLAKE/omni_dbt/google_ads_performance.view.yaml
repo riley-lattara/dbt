@@ -106,4 +106,4 @@ dbt:
       and s.keyword = c.keyword
       and s.match_type = c.match_type
     order by 1 desc, 2, 3, 4, 5, 6, 7
-  referenced_by: [ all_spend_by_account ]
+  referenced_by: [ all_ads_performance, all_spend_by_account ]
