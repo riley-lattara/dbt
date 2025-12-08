@@ -44,4 +44,4 @@ dbt:
             WHERE type = 'KEYWORD'
         )
         WHERE rn = 1
-  referenced_by: [ int_google_spend, int_google_conversions ]
+  referenced_by: [ int_google_keyword_spend, int_google_keyword_conversions ]
