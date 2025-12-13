@@ -45,6 +45,9 @@ dimensions:
     sql: '"CONVERSION_ACTION_NAME"'
     label: Conversion Action
 
+  is_optimization_conversion:
+    sql: '"IS_OPTIMIZATION_CONVERSION"'
+
 measures:
   count:
     aggregate_type: count

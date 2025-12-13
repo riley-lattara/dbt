@@ -39,6 +39,9 @@ dimensions:
   allconv:
     sql: '"ALLCONV"'
 
+  is_optimization_conversion:
+    sql: '"IS_OPTIMIZATION_CONVERSION"'
+
 measures:
   count:
     aggregate_type: count
