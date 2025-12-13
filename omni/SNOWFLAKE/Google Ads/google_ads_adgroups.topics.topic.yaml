@@ -2,12 +2,19 @@
 base_view: dbt_prod__google_ads_adgroup_performance
 base_view_label: Google Ads Ad Groups
 label: Google Ads Ad Group Performance
-group_label: Paid Media
+group_label: Google Ads
 description: |
   Ad group-level Google Ads performance data including spend, impressions, 
   clicks, and conversions. Covers Search, Demand Gen, and Video campaigns
   (90% spend coverage). Performance Max excluded as it has no ad groups.
+
+access_filters:
+  - field: dbt_prod__google_ads_adgroup_performance.account
+    user_attribute: allowed_accounts
+    values_for_unfiltered: [ is_admin ]
+
 joins: {}
+
 ai_context: |
   This topic contains Google Ads ad group performance data.
   Key metrics available:

@@ -2,12 +2,19 @@
 base_view: dbt_prod__google_ads_campaign_performance
 base_view_label: Google Ads Campaigns
 label: Google Ads Campaign Performance
-group_label: Paid Media
+group_label: Google Ads
 description: |
   Campaign-level Google Ads performance data including spend, impressions, 
   clicks, and conversions. 100% spend coverage including Performance Max.
   Use this topic for budget allocation and campaign strategy analysis.
+
+access_filters:
+  - field: dbt_prod__google_ads_campaign_performance.account
+    user_attribute: allowed_accounts
+    values_for_unfiltered: [ is_admin ]
+
 joins: {}
+
 ai_context: |
   This topic contains Google Ads campaign performance data.
   Key metrics available:
