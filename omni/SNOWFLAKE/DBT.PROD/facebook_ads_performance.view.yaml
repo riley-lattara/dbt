@@ -41,6 +41,11 @@ dimensions:
     sql: '"CONVERSIONNAME"'
     label: Conversion Name
 
+  is_optimization_conversion:
+    sql: '"IS_OPTIMIZATION_CONVERSION"'
+    label: Is Optimization Conversion
+    description: True if this conversion action is the primary optimization event for the account
+
   funnel_stage:
     sql: |
       CASE
@@ -59,8 +64,7 @@ dimensions:
         WHEN UPPER(${campaign}) LIKE '%AWARENESS%' THEN 'Awareness'
         ELSE 'Unclassified'
       END
-    description: Funnel stage derived from campaign naming convention (TOFU, MOFU,
-      BOFU, Prospecting, Retargeting, etc.)
+    description: Funnel stage derived from campaign naming convention (TOFU, MOFU, BOFU, Prospecting, Retargeting, etc.)
 
   geo_region:
     sql: |
@@ -168,8 +172,7 @@ dimensions:
         WHEN UPPER(${campaign}) LIKE '%EVERGREEN%' OR UPPER(${campaign}) LIKE '%BAU%' THEN 'Evergreen/BAU'
         ELSE 'Standard'
       END
-    description: Promotional or seasonal campaign type derived from campaign naming
-      convention
+    description: Promotional or seasonal campaign type derived from campaign naming convention
 
   industry_vertical:
     sql: |
@@ -193,8 +196,7 @@ dimensions:
         WHEN UPPER(${campaign}) LIKE '%SMALL%BUSINESS%' OR UPPER(${campaign}) LIKE '%SMB%' THEN 'Small Business'
         ELSE NULL
       END
-    description: Industry vertical targeting derived from campaign naming convention
-      (primarily Wrapmate campaigns)
+    description: Industry vertical targeting derived from campaign naming convention (primarily Wrapmate campaigns)
 
   attribution_window:
     sql: |
@@ -224,8 +226,9 @@ dimensions:
     sql: '"ALLCONV"'
     hidden: true
 
-  is_optimization_conversion:
-    sql: '"IS_OPTIMIZATION_CONVERSION"'
+  opt_conv_value:
+    sql: CASE WHEN "IS_OPTIMIZATION_CONVERSION" = TRUE THEN "ALLCONV" ELSE 0 END
+    hidden: true
 
 measures:
   count:
@@ -255,6 +258,13 @@ measures:
     format: number_2
     aggregate_type: sum
 
+  optimization_conversions:
+    sql: ${opt_conv_value}
+    label: Optimization Conversions
+    description: Conversions from the primary optimization event for each account
+    format: number_2
+    aggregate_type: sum
+
   ctr:
     sql: ${total_clicks} / NULLIF(${total_impressions}, 0) * 100
     label: CTR
@@ -275,40 +285,13 @@ measures:
     label: CPA
     format: usdcurrency_2
 
+  cost_per_optimization_conversion:
+    sql: ${total_spend} / NULLIF(${optimization_conversions}, 0)
+    label: Cost per Optimization Conversion
+    description: Cost per primary optimization conversion
+    format: usdcurrency_2
+
   conversion_rate:
     sql: ${total_conversions} / NULLIF(${total_clicks}, 0) * 100
     label: Conversion Rate
     format: percent_2
-
-#The info below was pulled from your dbt repository and is read-only.
-dbt:
-  name: facebook_ads_performance
-  target_schema: PROD
-  config:
-    materialized: table
-  code: |-
-    {{config(materialized = "table")}} 
-
-    SELECT CAST(f.DATE AS DATE) AS DATE
-         , f.ACCOUNT
-         , f.CAMPAIGN
-         , f.ADSET
-         , f.AD
-         , f.AD_ID
-         , f.CONVERSIONNAME
-         , f.SPEND_RAW/f.DIVIDEND AS SPEND
-         , f.IMPRESSIONS_RAW/f.DIVIDEND AS IMPRESSIONS
-         , f.CLICKS_RAW/f.DIVIDEND AS CLICKS
-         , f.ALLCONV
-         , CASE WHEN oc.optimization_conversion IS NOT NULL THEN TRUE ELSE FALSE END AS IS_OPTIMIZATION_CONVERSION
-    FROM {{ ref('int_facebook_conversions') }} f
-    LEFT JOIN {{ ref('optimization_conversions') }} oc
-        ON f.ACCOUNT = oc.account
-        AND f.CONVERSIONNAME = oc.optimization_conversion
-        AND oc.platform = 'facebook'
-    ORDER BY DATE DESC
-         , CAMPAIGN ASC
-         , ADSET ASC
-         , AD ASC
-         , CONVERSIONNAME ASC
-  referenced_by: [ all_ads_performance, all_spend_by_account ]
