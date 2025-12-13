@@ -8,11 +8,15 @@ description: |
   clicks, and conversions at the ad level. Use this topic to analyze campaign 
   performance, optimize ad spend, and track conversion metrics.
 
+access_filters:
+  - field: dbt_prod__facebook_ads_performance.account
+    user_attribute: allowed_accounts
+    values_for_unfiltered: [ is_admin ]
+
 joins: {}
 
 ai_context: |
   This topic contains Facebook and Instagram advertising performance data.
-
   Key metrics available:
   - total_spend: Total advertising spend in USD
   - total_impressions: Number of times ads were shown
@@ -23,15 +27,12 @@ ai_context: |
   - cpm: Cost per thousand impressions
   - cpa: Cost per acquisition (spend / conversions)
   - conversion_rate: Conversions / clicks
-
   Data hierarchy:
   - Account > Campaign > Ad Set > Ad
-
   Common questions:
   - What is our total spend by campaign?
   - Which ad sets have the best CTR?
   - What is our average CPA by month?
   - Show me spend trends over time
-
   When asked about performance, default to using total_spend, total_clicks, 
   and ctr. For conversion analysis, use total_conversions and cpa.

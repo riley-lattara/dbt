@@ -8,19 +8,21 @@ description: |
   ad group / ad set level. Use this topic for cross-platform analysis, 
   total spend reporting, and unified performance metrics.
 
+access_filters:
+  - field: dbt_prod__all_ads_performance.account
+    user_attribute: allowed_accounts
+    values_for_unfiltered: [ is_admin ]
+
 joins: {}
 
 ai_context: |
   This topic contains combined advertising data from Facebook and Google Ads
   at the ad group / ad set level.
-
   Key dimension for segmentation:
   - platform: 'Facebook' or 'Google' to filter by ad platform
   - ad_group: Ad Group (Google) or Ad Set (Facebook)
-
   Data hierarchy:
   - Platform > Account > Campaign > Ad Group/Ad Set
-
   Key metrics available:
   - total_spend: Total advertising spend in USD across all platforms
   - total_impressions: Number of times ads were shown
@@ -32,7 +34,6 @@ ai_context: |
   - cpm: Cost per thousand impressions
   - cpa: Cost per acquisition (spend / conversions)
   - roas: Return on ad spend (Google only, has conversion_value)
-
   Common questions:
   - What is our total spend across all platforms?
   - Compare Facebook vs Google performance
@@ -40,7 +41,6 @@ ai_context: |
   - Show me total spend by platform over time
   - What is our blended CPC across all channels?
   - Which campaigns have the highest spend?
-
   Important notes:
   - conversion_value and roas only available for Google data
   - When comparing platforms, always include the platform dimension
