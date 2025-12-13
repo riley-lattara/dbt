@@ -44,7 +44,7 @@ dimensions:
     hidden: true
     
   ad_group:
-    sql: ${TABLE}.AD_GROUP
+    sql: ${TABLE}.ADGROUP
     label: Ad Group
     description: Ad group name
     
@@ -58,6 +58,16 @@ dimensions:
     sql: ${TABLE}.CONVERSION_ACTION_NAME
     label: Conversion Action
     description: Name of the conversion action
+
+  is_optimization_conversion:
+    sql: ${TABLE}.IS_OPTIMIZATION_CONVERSION
+    label: Is Optimization Conversion
+    description: True if this conversion action is the primary optimization event for the account
+
+  # Hidden base columns for optimization conversions
+  opt_conv_value:
+    sql: CASE WHEN ${TABLE}.IS_OPTIMIZATION_CONVERSION = TRUE THEN ${TABLE}.CONVERSIONS ELSE 0 END
+    hidden: true
 
 measures:
   total_spend:
@@ -87,6 +97,13 @@ measures:
     format: number_2
     label: Conversions
     description: Total conversions
+
+  optimization_conversions:
+    sql: ${opt_conv_value}
+    aggregate_type: sum
+    format: number_2
+    label: Optimization Conversions
+    description: Conversions from the primary optimization event for each account
     
   total_conversion_value:
     sql: ${TABLE}.CONVERSION_VALUE
@@ -97,42 +114,42 @@ measures:
     
   cpc:
     sql: ${total_spend} / NULLIF(${total_clicks}, 0)
-    aggregate_type: number
     format: usd_2
     label: CPC
     description: Cost per click
     
   ctr:
     sql: (${total_clicks} / NULLIF(${total_impressions}, 0)) * 100
-    aggregate_type: number
     format: percent_2
     label: CTR
     description: Click-through rate
     
   cpm:
     sql: (${total_spend} / NULLIF(${total_impressions}, 0)) * 1000
-    aggregate_type: number
     format: usd_2
     label: CPM
     description: Cost per thousand impressions
     
   cpa:
     sql: ${total_spend} / NULLIF(${total_conversions}, 0)
-    aggregate_type: number
     format: usd_2
     label: CPA
     description: Cost per acquisition
+
+  cost_per_optimization_conversion:
+    sql: ${total_spend} / NULLIF(${optimization_conversions}, 0)
+    format: usd_2
+    label: Cost per Optimization Conversion
+    description: Cost per primary optimization conversion
     
   roas:
     sql: ${total_conversion_value} / NULLIF(${total_spend}, 0)
-    aggregate_type: number
     format: number_2
     label: ROAS
     description: Return on ad spend
     
   conversion_rate:
     sql: (${total_conversions} / NULLIF(${total_clicks}, 0)) * 100
-    aggregate_type: number
     format: percent_2
     label: Conversion Rate
     description: Conversions divided by clicks
