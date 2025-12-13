@@ -41,6 +41,12 @@ dimensions:
     sql: '"CONVERSIONNAME"'
     label: Conversion Name
 
+  is_optimization_conversion:
+    sql: '"IS_OPTIMIZATION_CONVERSION"'
+    label: Is Optimization Conversion
+    description: True if this conversion action is the primary optimization event
+      for the account
+
   funnel_stage:
     sql: |
       CASE
@@ -224,8 +230,9 @@ dimensions:
     sql: '"ALLCONV"'
     hidden: true
 
-  is_optimization_conversion:
-    sql: '"IS_OPTIMIZATION_CONVERSION"'
+  opt_conv_value:
+    sql: CASE WHEN "IS_OPTIMIZATION_CONVERSION" = TRUE THEN "ALLCONV" ELSE 0 END
+    hidden: true
 
 measures:
   count:
@@ -255,6 +262,13 @@ measures:
     format: number_2
     aggregate_type: sum
 
+  optimization_conversions:
+    sql: ${opt_conv_value}
+    label: Optimization Conversions
+    format: number_2
+    description: Conversions from the primary optimization event for each account
+    aggregate_type: sum
+
   ctr:
     sql: ${total_clicks} / NULLIF(${total_impressions}, 0) * 100
     label: CTR
@@ -274,6 +288,12 @@ measures:
     sql: ${total_spend} / NULLIF(${total_conversions}, 0)
     label: CPA
     format: usdcurrency_2
+
+  cost_per_optimization_conversion:
+    sql: ${total_spend} / NULLIF(${optimization_conversions}, 0)
+    label: Cost per Optimization Conversion
+    format: usdcurrency_2
+    description: Cost per primary optimization conversion
 
   conversion_rate:
     sql: ${total_conversions} / NULLIF(${total_clicks}, 0) * 100

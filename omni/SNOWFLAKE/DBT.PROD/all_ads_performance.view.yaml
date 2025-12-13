@@ -11,20 +11,17 @@ dimensions:
     hidden: true
     primary_key: true
 
-  # Date dimension
   date:
     sql: '"DATE"'
     label: Date
     timeframes: [ raw, date, week, month, quarter, year ]
     convert_tz: false
 
-  # Platform dimension
   platform:
     sql: '"PLATFORM"'
     label: Platform
     description: Advertising platform (Facebook, Google)
 
-  # Hierarchy dimensions
   account:
     sql: '"ACCOUNT"'
     label: Account
@@ -44,6 +41,12 @@ dimensions:
     sql: '"CONVERSION_NAME"'
     label: Conversion Name
     description: Name of the conversion action
+
+  is_optimization_conversion:
+    sql: '"IS_OPTIMIZATION_CONVERSION"'
+    label: Is Optimization Conversion
+    description: True if this conversion action is the primary optimization event
+      for the account
 
   # Hidden base columns for aggregation
   spend:
@@ -66,13 +69,15 @@ dimensions:
     sql: '"CONVERSION_VALUE"'
     hidden: true
 
+  opt_conv_value:
+    sql: CASE WHEN "IS_OPTIMIZATION_CONVERSION" = TRUE THEN "CONVERSIONS" ELSE 0 END
+    hidden: true
+
 measures:
-  # Row count
   count:
     description: Count of records
     aggregate_type: count
 
-  # Base metrics
   total_spend:
     sql: ${spend}
     label: Total Spend
@@ -101,6 +106,13 @@ measures:
     description: Total number of conversions
     aggregate_type: sum
 
+  optimization_conversions:
+    sql: ${opt_conv_value}
+    label: Optimization Conversions
+    format: number_2
+    description: Conversions from the primary optimization event for each account
+    aggregate_type: sum
+
   total_conversion_value:
     sql: ${conversion_value}
     label: Total Conversion Value
@@ -108,7 +120,6 @@ measures:
     description: Total conversion value (Google only)
     aggregate_type: sum
 
-  # Calculated metrics
   ctr:
     sql: ${total_clicks} / NULLIF(${total_impressions}, 0) * 100
     label: CTR
@@ -133,6 +144,12 @@ measures:
     format: usdcurrency_2
     description: Cost per acquisition (spend / conversions)
 
+  cost_per_optimization_conversion:
+    sql: ${total_spend} / NULLIF(${optimization_conversions}, 0)
+    label: Cost per Optimization Conversion
+    format: usdcurrency_2
+    description: Cost per primary optimization conversion
+
   roas:
     sql: ${total_conversion_value} / NULLIF(${total_spend}, 0)
     label: ROAS
@@ -145,7 +162,6 @@ measures:
     format: percent_2
     description: Conversion rate (conversions / clicks)
 
-  # Count measures
   campaign_count:
     sql: ${campaign}
     label: Campaign Count
